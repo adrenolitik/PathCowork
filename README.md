@@ -1,94 +1,93 @@
 # PathCowork
 
-**PathCowork: Shadowing Pathologists to Learn Diagnostic and Research Reasoning from Gaze, Voice, and Interaction**
+**PathCowork: Наблюдение за патологами для обучения диагностическому и исследовательскому мышлению через взгляд, голос и взаимодействие**
 
-## What Is PathCowork
+## Что такое PathCowork
 
-PathCowork is a multimodal platform that lets AI "shadow" expert pathologists during whole-slide image review, so models can learn not only final diagnoses but also the diagnostic process.
+PathCowork — это мультимодальная платформа, которая позволяет ИИ «наблюдать» за экспертными патологами при просмотре целых стеклянных препаратов (whole-slide images, WSI), чтобы модели могли учиться не только итоговым диагнозам, но и самому диагностическому процессу.
 
-Instead of training only on static slide-report pairs, PathCowork synchronizes four behavioral streams during routine work: viewport navigation, eye gaze, voice reasoning, and interaction logs (including AI-assist tool usage). These signals are processed into structured supervision, including spatial grounding, trajectories, revisitation patterns, and aligned text/thinking traces. The goal is to close the analysis-navigation gap: helping AI learn both where to look and how to reason.
+Вместо обучения только на статических парах «препарат — отчёт», PathCowork синхронизирует четыре поведенческих потока во время рутинной работы: навигацию по области просмотра (viewport), взгляд (eye gaze), голосовое рассуждение и логи взаимодействия (включая использование ИИ-ассистентов). Эти сигналы преобразуются в структурированное обучение с учителем, включающее пространственную привязку (grounding), траектории, паттерны повторных посещений и выровненные текстовые следы мышления. Цель — устранить разрыв между анализом и навигацией: помочь ИИ учиться не только *где смотреть*, но и *как рассуждать*.
 
-## Videos
+## Видео
 
-- **[Main Video 1: Interactive whole-slide review](videos/01_Main_Video_1_Agent.mp4)**: PathCowork examines a skin slide, localizes evidence and records findings. Updated recording with cleaned narration audio. [English subtitles](videos/01_Main_Video_1_Agent.en.srt).
-- **[Video 2: Capturing pathologist behavior](videos/02_Video_2_Behavior_Acquisition.mp4)**: Gaze, navigation and spoken observations during skin-biopsy review. [English subtitles](videos/02_Video_2_Behavior_Acquisition.en.srt).
-- **[Supplementary Video 3: Learned navigation](videos/03_Supplementary_Video_3_General_Navigation.mp4)**: PathCowork-general navigates a lymph-node slide using a learned viewing policy.
+- **[Основное видео 1: Интерактивный обзор целого препарата](videos/01_Main_Video_1_Agent.mp4)**: PathCowork анализирует кожный препарат, локализует доказательства и фиксирует обнаружения. Обновлённая запись с очищенным аудио наррации. [Английские субтитры](videos/01_Main_Video_1_Agent.en.srt).
+- **[Видео 2: Захват поведения патолога](videos/02_Video_2_Behavior_Acquisition.mp4)**: Взгляд, навигация и устные наблюдения при обзоре кожной биопсии. [Английские субтитры](videos/02_Video_2_Behavior_Acquisition.en.srt).
+- **[Дополнительное видео 3: Обученная навигация](videos/03_Supplementary_Video_3_General_Navigation.mp4)**: PathCowork-general навигирует по лимфоузловому препарату, используя обученную политику просмотра.
 
-[Full video descriptions](videos/Video_legends.txt).
+[Полные описания видео](videos/Video_legends.txt).
 
-## Main Manuscript Figure
+## Основная иллюстрация рукописи
 
-
-![PathCowork main manuscript figure](image-2.png)
+![Основная иллюстрация рукописи PathCowork](image-2.png)
 
 ## PathCowork-Grounder
 
-[**Download PathCowork-Grounder-27B (GGUF) on Hugging Face**](https://huggingface.co/sheng-wang/pathcowork-grounder-27B-GGUF)
+[**Скачать PathCowork-Grounder-27B (GGUF) на Hugging Face**](https://huggingface.co/sheng-wang/pathcowork-grounder-27B-GGUF)
 
-PathCowork-Grounder localizes histological features in H&E images from natural-language requests. Give it an image and ask it to outline a finding, and it returns labeled regions that can be overlaid on the image. The released 27B model is post-trained from the Qwen family and distributed in GGUF format.
+PathCowork-Grounder локализует гистологические признаки на H&E-изображениях по запросам на естественном языке. Передайте ему изображение и попросите обвести находку — он вернёт размеченные области, которые можно наложить на изображение. Выпущенная 27B-модель дообучена на базе семейства Qwen и распространяется в формате GGUF.
 
-- **One or several concepts per request:** locate a single finding or ask for multiple features in the same image.
-- **Structured spatial output:** return a JSON list of labeled polygons or polylines, using integer coordinates on a normalized 0–1000 grid (x increases rightward; y increases downward).
-- **Absent findings:** return `There are none.` when the requested feature is absent.
-- **Five primary tissue groups:** brain, breast, lymph node, prostate needle biopsy and skin. Targets include microvascular proliferation, ductal carcinoma in situ, metastatic tumour foci, Gleason patterns and melanocytic features, as well as boundaries such as the dermoepidermal junction.
-- **Additional tissue examples:** the model card illustrates localization of bladder papillary fronds, normal colonic mucosa, alveolar lung parenchyma and normal gastric mucosa.
+- **Один или несколько концептов на запрос:** локализовать единичное нахождение или запросить несколько признаков на одном изображении.
+- **Структурированный пространственный вывод:** возвращает JSON-список размеченных полигонов или полилиний, используя целочисленные координаты на нормализованной сетке 0–1000 (x растёт вправо; y растёт вниз).
+- **Отсутствующие находки:** возвращает `There are none.`, когда запрошенный признак отсутствует.
+- **Пять основных групп тканей:** мозг, молочная железа, лимфоузел, игольчатая биопсия простаты и кожа. Цели включают микроваскулярную пролиферацию, нефробиобластому втубе, метастатические очаги ткани, паттерны Глисона и меланоцитарные признаки, а также границы, такие как дермоэпидермальный стык.
+- **Дополнительные примеры тканей:** в карточке модели показана локализация мочевыносительных папилл, нормальной слизистой толстой кишки, альвеолярной легочной паренхимы и нормальной слизистой желудка.
 
-### One image, three requests
+### Одно изображение, три запроса
 
-Single-class, multiple-class and negative requests on the same skin field, with the three prompts and original model outputs.
+Одиночный класс, множественные классы и отрицательные запросы на одном кожном поле, с тремя промптами и исходными выходами модели.
 
-![Single-class, multiple-class and negative requests with prompts and result overlays](assets/grounder/grounder_prompt_modes.png)
+![Одиночный класс, множественные классы и отрицательные запросы с промптами и наложениями результатов](assets/grounder/grounder_prompt_modes.png)
 
-### Grounding across tissues
+### Grounding по тканям
 
-**First row: Five primary tissue groups.** Brain, breast, lymph node, prostate and skin. **Second row: Additional tissue examples.** Bladder, colon, lung and stomach. All panels retain the original result overlays.
+**Первая строка: Пять основных групп тканей.** Мозг, молочная железа, лимфоузел, простата и кожа. **Вторая строка: Дополнительные примеры тканей.** Мочевой пузырь, толстая кишка, лёгкие и желудок. Все панели сохраняют оригинальные наложения результатов.
 
-![Five primary tissue groups and additional tissue examples with result overlays](assets/grounder/grounder_tissue_examples.png)
+![Пять основных групп тканей и дополнительные примеры тканей с наложениями результатов](assets/grounder/grounder_tissue_examples.png)
 
-See the [Hugging Face model card](https://huggingface.co/sheng-wang/pathcowork-grounder-27B-GGUF#4-trained-organs-and-target-concepts) for the full target-concept list, illustrated examples and output formats.
+См. [карточку модели на Hugging Face](https://huggingface.co/sheng-wang/pathcowork-grounder-27B-GGUF#4-trained-organs-and-target-concepts) для полного списка целевых концептов, иллюстрированных примеров и форматов вывода.
 
-## Repository Structure
+## Структура репозитория
 
-- `viewer/`: whole-slide viewer app and runtime capture entrypoint
-- `processors/viewport/`: viewport denoising, keyframe extraction, stable navigation segments
-- `processors/gaze/`: gaze cleaning, fixation/saccade parsing, attention grounding
-- `processors/voice/`: offline/online ASR pipeline and transcript alignment
-- `processors/interaction/`: interaction/tool-log normalization
-- `processors/mouse/`: mouse trajectory processing and hover/click event extraction
-- `processors/revisit/`: revisit detection from viewport/mouse traces (heuristic module, evolving)
-- `final_outputs/`: converts processed segment signals into human learning material, machine datasets, and QA benchmarks
-- `schemas/`: unified JSON contracts shared across all processors
-- `history/`: lightweight shareable case-history bundle (`seg_*_raw.json` + `seg_*_union.webp`)
-- `streamlit_app.py`: Streamlit debugging UI for history/segment browsing and on-demand gaze rendering
-- `videos/`: three demonstration videos, English subtitles and video descriptions
-- `image-2.png`: main manuscript figure
+- `viewer/`: приложение для просмотра целых препаратов и точка входа для захвата во время выполнения
+- `processors/viewport/`: денойзинг viewport, извлечение ключевых кадров, стабильные сегменты навигации
+- `processors/gaze/`: очистка взгляда, парсинг фиксаций/саккад, привязка внимания (attention grounding)
+- `processors/voice/`: офлайн/онлайн ASR-пайплайн и выравнивание транскриптов
+- `processors/interaction/`: нормализация логов взаимодействия/инструментов
+- `processors/mouse/`: обработка траекторий мыши и извлечение событий наведения/клика
+- `processors/revisit/`: детекция повторных посещений из следов viewport/мыши (эвристический модуль, развивается)
+- `final_outputs/`: преобразует обработанные сегментные сигналы в обучающие материалы для людей, датасеты для машин и бенчмарки QA
+- `schemas/`: унифицированные JSON-контракты, общие для всех процессоров
+- `history/`: лёгкий обменный пакет истории случаев (`seg_*_raw.json` + `seg_*_union.webp`)
+- `streamlit_app.py`: Streamlit UI для отладки: просмотр истории/сегментов и рендеринг взгляда по требованию
+- `videos/`: три демонстрационных видео, английские субтитры и описания видео
+- `image-2.png`: основная иллюстрация рукописи
 
-## Data Product Strategy
+## Стратегия данных
 
-PathCowork standardizes multimodal traces into a unified event representation for agent-style training.
+PathCowork стандартизирует мультимодальные следы в единое событийное представление для обучения в стиле агентов.
 
-- Viewport output: tool-use style events (`zoom`, `pan`, `inspect`, `peek`) + stable keyframes + revisit candidates
-- Gaze output: tool-use style events (`highlight`) aligned to viewport context
-- Interaction output: tool-use style events for AI-assist or user-invoked tools
-- Voice output: aligned transcript/thought text (not forced into tool-use)
-- Mouse output: movement/hover/click traces supporting revisit and intent inference
+- Выход viewport: события в стиле tool-use (`zoom`, `pan`, `inspect`, `peek`) + стабильные ключевые кадры + кандидаты на повторные посещения
+- Выход gaze: события в стиле tool-use (`highlight`), выровненные по контексту viewport
+- Выход interaction: события в стиле tool-use для ИИ-ассистентов или пользовательских инструментов
+- Выход voice: выровненный транскрипт/текст мышления (не принудительно приводится к tool-use)
+- Выход mouse: следы движений/наведений/кликов, поддерживающие инференс повторных посещений и намерений
 
-See `schemas/README.md` and `schemas/unified_event.schema.json` for the common format.
+См. `schemas/README.md` и `schemas/unified_event.schema.json` для общего формата.
 
-## Gaze Rendering Note
+## Примечание по рендерингу взгляда
 
-For IVT-IDT fixation comparison panels and manuscript-ready gaze/boundary overlays, see:
+Для панелей сравнения фиксаций IVT-IDT и готовых к публикации наложений взгляда/границ см.:
+
 - `processors/gaze/README.md`
 - `processors/gaze/GazeData.py`
 
-By default, gaze overlays are rendered without any `union.png` crop fix.
-If a dataset has canvas-border artifacts, crop can be enabled manually via
-`canvas_crop_insets=(top, bottom, left, right)`.
+По умолчанию наложения взгляда рендерятся без исправления кропа `union.png`. Если датасет имеет артефакты границ холста, кроп можно включить вручную через `canvas_crop_insets=(top, bottom, left, right)`.
 
-## History Bundle Format
+## Формат пакета истории (History Bundle)
 
-`history/` uses neutral case identifiers (`case_001` to `case_005`) and is designed to stay compact and shareable:
-- Required per segment:
+`history/` использует нейтральные идентификаторы случаев (`case_001` — `case_005`) и спроектирован для компактности и обменяемости:
+
+- Обязательно на сегмент:
   - `seg_xxxx_raw.json`
-  - `seg_xxxx_union.webp` (lossy WebP, currently q=85)
-- JSON stays small and portable; image payload is compressed for Git sharing.
+  - `seg_xxxx_union.webp` (lossy WebP, сейчас q=85)
+- JSON остаётся малым и переносимым; полезная нагрузка изображения сжата для обмена через Git.
